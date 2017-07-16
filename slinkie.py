@@ -141,7 +141,7 @@ class Slinkie:
                 yield Slinkie(result)
         return Slinkie(inner())
 
-    def sort(self, key, reverse=False):
+    def sort(self, key=None, reverse=False):
         """
         Sorts the items by key.
         """
