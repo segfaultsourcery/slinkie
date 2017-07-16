@@ -29,3 +29,7 @@ Functions
 - take: Take n items.
 - tuple: Returns a tuple of all items.
 - where: Filter the items.
+
+Installation
+------------
+Slinkie is available on pip, so a simple "pip install slinkie" should do it.
