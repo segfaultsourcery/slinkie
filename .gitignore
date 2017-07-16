@@ -154,3 +154,4 @@ tools/
 build.sh
 tools/generate_readme.py
 tools/test.py
+.idea/
