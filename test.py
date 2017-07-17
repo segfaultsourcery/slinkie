@@ -195,9 +195,9 @@ class TestSlinkie(unittest.TestCase):
         expected = list(zip(*items))
         self.assertSequenceEqual(actual, expected)
 
-        items = ((1, 2, 'a'), (3, 4, 'b'), (5, 6, 'c'))
-        actual = Slinkie(items).transpose().tuple()
-        expected = list(zip(*items))
+        items = '1a2b3c'
+        actual = Slinkie(items).partition(2).transpose().tuple()
+        expected = (('1', '2', '3'), ('a', 'b', 'c'))
         self.assertSequenceEqual(actual, expected)
 
     def test_tuple(self):

@@ -40,9 +40,14 @@ class Slinkie:
         """
         Take n items.
         """
+
         def inner():
-            for _ in range(n):
-                yield next(self._items)
+            try:
+                for _ in range(n):
+                    yield next(self._items)
+            except StopIteration:
+                return
+
         return Slinkie(inner())
 
     def first(self, key=None):
@@ -139,7 +144,7 @@ class Slinkie:
             while True:
                 result = self.take(n).list()
                 if not result:
-                    raise StopIteration()
+                    return
                 yield Slinkie(result)
         return Slinkie(inner())
 
