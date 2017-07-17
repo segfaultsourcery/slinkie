@@ -46,6 +46,16 @@ class TestSlinkie(unittest.TestCase):
         expected = (0, 1, 2, 3, 4, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
         self.assertTupleEqual(actual, expected)
 
+        to_exclude = [{'id': 3}]
+        actual = Slinkie(self.ITEMS) \
+            .take(5) \
+            .map(lambda it: {'id': it}) \
+            .exclude(to_exclude, key=lambda it: it['id']) \
+            .tuple()
+
+        expected = ({'id': 0}, {'id': 1}, {'id': 2}, {'id': 4})
+        self.assertTupleEqual(actual, expected)
+
     def test_extend(self):
         list1 = (1, 2, 3)
         list2 = (4, 5, 6)

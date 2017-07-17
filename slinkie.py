@@ -127,11 +127,9 @@ class Slinkie:
         """
         if key:
             keys = list(map(key, items))
-        else:
-            key = lambda it: it
-            keys = items
+            return Slinkie(filter(lambda it: key(it) not in keys, self._items))
 
-        return Slinkie(filter(lambda it: key(it) not in keys, self._items))
+        return Slinkie(filter(lambda it: it not in items, self._items))
 
     def partition(self, n):
         """
