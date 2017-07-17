@@ -27,6 +27,7 @@ Functions
 - skip(n): Skip n items.
 - sort(key=None, reverse=False): Sorts the items by key.
 - take(n): Take n items.
+- transpose(): Transposes the contents of a Slinkie.
 - tuple(): Returns a tuple of all items.
 - where(key): Filter the items.
 
