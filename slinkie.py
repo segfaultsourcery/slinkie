@@ -16,17 +16,17 @@ class Slinkie:
     def __next__(self):
         return next(self._items)
 
-    def filter(self, selector):
+    def filter(self, key):
         """
         Filter the items.
         """
-        return Slinkie(filter(selector, self._items))
+        return Slinkie(filter(key, self._items))
 
-    def map(self, selector):
+    def map(self, transform):
         """
         Map the items.
         """
-        return Slinkie(map(selector, self._items))
+        return Slinkie(map(transform, self._items))
 
     def skip(self, n):
         """
@@ -45,37 +45,37 @@ class Slinkie:
                 yield next(self._items)
         return Slinkie(inner())
 
-    def first(self, selector=None):
+    def first(self, key=None):
         """
-        Take the first item if selector is None, otherwise take the first item where selector(item) returns true.
+        Take the first item if key is None, otherwise take the first item where key(item) returns true.
         If there are no objects, StopIteration is raised.
         """
-        return next(self) if selector is None else next(filter(selector, self._items))
+        return next(self) if key is None else next(filter(key, self._items))
 
-    def first_or_none(self, selector=None):
+    def first_or_none(self, key=None):
         """
-        Take the first item if selector is None, otherwise take the first item where selector(item) returns true.
+        Take the first item if key is None, otherwise take the first item where key(item) returns true.
         If there are no objects, None is returned.
         """
-        return next(self, None) if selector is None else next(filter(selector, self._items), None)
+        return next(self, None) if key is None else next(filter(key, self._items), None)
 
-    def last(self, selector=None):
+    def last(self, key=None):
         """
-        Take the last item if selector is None, otherwise take the first item where selector(item) returns true.
+        Take the last item if key is None, otherwise take the first item where key(item) returns true.
         If there are no objects, StopIteration is raised.
         """
         try:
-            return list(self if selector is None else filter(selector, self._items))[-1]
+            return list(self if key is None else filter(key, self._items))[-1]
         except IndexError:
             raise StopIteration()
 
-    def last_or_none(self, selector=None):
+    def last_or_none(self, key=None):
         """
-        Take the first item if selector is None, otherwise take the first item where selector(item) returns true.
+        Take the first item if key is None, otherwise take the first item where key(item) returns true.
         If there are no objects, None is returned.
         """
         try:
-            return self.last(selector)
+            return self.last(key)
         except StopIteration:
             return None
 
@@ -179,7 +179,7 @@ class Slinkie:
         """
         return set(self._items)
 
-    def dict(self, key=None, value=None):
+    def dict(self, key=None, transform=None):
         """
         Returns a dict of all items.
         """
@@ -187,10 +187,10 @@ class Slinkie:
         if key is None:
             key = lambda it: it[0]
 
-        if value is None:
-            value = lambda it: it[1]
+        if transform is None:
+            transform = lambda it: it[1]
 
-        return {key(it): value(it) for it in self._items}
+        return {key(it): transform(it) for it in self._items}
 
     # Aliases
     where = filter
