@@ -13,6 +13,14 @@ class TestSlinkie(unittest.TestCase):
         expected = [5, 6, 7, 8]
         self.assertSequenceEqual(actual, expected)
 
+        actual = Slinkie(self.ITEMS) \
+            .map(lambda it: {'id': it}) \
+            .between(5, 8, key=lambda it: it['id']) \
+            .list()
+
+        expected = [{'id': 5}, {'id': 6}, {'id': 7}, {'id': 8}]
+        self.assertSequenceEqual(actual, expected)
+
     def test_count(self):
         actual = Slinkie(self.ITEMS).count()
         expected = len(self.ITEMS)
@@ -22,8 +30,8 @@ class TestSlinkie(unittest.TestCase):
         def _classify(it):
             return 'even' if it & 1 == 0 else 'uneven'
 
-        actual = Slinkie(self.ITEMS)\
-            .group(_classify)\
+        actual = Slinkie(self.ITEMS) \
+            .group(_classify) \
             .dict(value=lambda it: it[1].tuple())
 
         expected_evens = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
@@ -81,8 +89,8 @@ class TestSlinkie(unittest.TestCase):
         def _classify(it):
             return 'even' if it & 1 == 0 else 'uneven'
 
-        actual = Slinkie(self.ITEMS)\
-            .group(_classify)\
+        actual = Slinkie(self.ITEMS) \
+            .group(_classify) \
             .dict(value=lambda it: it[1].tuple())
 
         expected_evens = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20)

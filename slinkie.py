@@ -85,11 +85,15 @@ class Slinkie:
         """
         return Slinkie(chain.from_iterable(self._items))
 
-    def between(self, a, b):
+    def between(self, a, b, key=None):
         """
         Returns items between a and b. (Inclusive).
         """
-        return Slinkie(filter(lambda it: a <= it <= b, self._items))
+
+        if key is None:
+            return Slinkie(filter(lambda it: a <= it <= b, self._items))
+
+        return Slinkie(filter(lambda it: a <= key(it) <= b, self._items))
 
     def not_none(self):
         """
