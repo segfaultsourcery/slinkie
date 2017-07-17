@@ -161,6 +161,12 @@ class Slinkie:
         """
         return sum(1 for _ in self._items)
 
+    def transpose(self):
+        """
+        Transposes the contents of a Slinkie.
+        """
+        return Slinkie(zip(*self._items))
+
     def list(self):
         """
         Returns a list of all items.
