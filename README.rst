@@ -4,7 +4,7 @@ This is an implementation of LINQ in Python.
 
 Functions
 ---------
-- between(a, b): Returns items between a and b. (Inclusive).
+- between(a, b, key=None): Returns items between a and b. (Inclusive).
 - count(): Consumes all items to produce a count.
 - dict(key=None, value=None): Returns a dict of all items.
 - exclude(items, key=None): Excludes all items based on either their identity, or a key function.
