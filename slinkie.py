@@ -16,6 +16,18 @@ class Slinkie:
     def __next__(self):
         return next(self._items)
 
+    def consume(self, n=None):
+        """
+        Consume n items. If n is None, consume everything.
+        """
+
+        try:
+            for _ in range(n) if n else self._items:
+                next(self._items)
+        except StopIteration:
+            pass
+        return self
+
     def filter(self, key):
         """
         Filter the items.

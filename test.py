@@ -21,6 +21,15 @@ class TestSlinkie(unittest.TestCase):
         expected = [{'id': 5}, {'id': 6}, {'id': 7}, {'id': 8}]
         self.assertSequenceEqual(actual, expected)
 
+    def test_consume(self):
+        actual = Slinkie(self.ITEMS).consume().len()
+        expected = 0
+        self.assertEqual(actual, expected)
+
+        actual = Slinkie(self.ITEMS).consume(10).len()
+        expected = 11
+        self.assertEqual(actual, expected)
+
     def test_count(self):
         actual = Slinkie(self.ITEMS).count()
         expected = len(self.ITEMS)
