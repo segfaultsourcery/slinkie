@@ -1,6 +1,7 @@
 import unittest
 from functools import partial
 from operator import mul
+from time import sleep
 
 from slinkie import Slinkie
 
@@ -170,6 +171,17 @@ class TestSlinkie(unittest.TestCase):
         actual = Slinkie(items).not_none().tuple()
         expected = (1, 2, 3)
         self.assertTupleEqual(actual, expected)
+
+    def test_parallelize(self):
+        def _wait(number):
+            sleep(number / 1000.0)
+            return number
+
+        numbers = (7, 2, 1, 4, 2, 5, 1, 1, 2, 3)
+        actual = Slinkie(numbers).parallelize(_wait, len(numbers)).list()
+        expected = sorted(numbers)
+
+        self.assertSequenceEqual(actual, expected)
 
     def test_partition(self):
         actual = Slinkie(self.ITEMS).partition(3).first().tuple()

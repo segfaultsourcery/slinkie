@@ -1,4 +1,5 @@
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from itertools import chain
 
 
@@ -179,6 +180,18 @@ class Slinkie:
         Sorts the items by key.
         """
         return Slinkie(sorted(self._items, key=key, reverse=reverse))
+
+    def parallelize(self, fn, threads=8):
+        def inner():
+            with ThreadPoolExecutor(threads) as tpe:
+                tasks = [tpe.submit(fn, item) for item in self._items]
+                for future in as_completed(tasks):
+                    try:
+                        yield future.result()
+                    except Exception as exception:
+                        yield exception
+
+        return Slinkie(inner())
 
     def join(self, glue=''):
         """
