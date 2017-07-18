@@ -182,6 +182,10 @@ class Slinkie:
         return Slinkie(sorted(self._items, key=key, reverse=reverse))
 
     def parallelize(self, fn, threads=8):
+        """
+        Parallelize a function call.
+        """
+
         def inner():
             with ThreadPoolExecutor(threads) as tpe:
                 tasks = [tpe.submit(fn, item) for item in self._items]
