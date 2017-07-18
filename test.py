@@ -174,7 +174,7 @@ class TestSlinkie(unittest.TestCase):
 
     def test_parallelize(self):
         def _wait(number):
-            sleep(number / 1000.0)
+            sleep(number / 100.0)
             return number
 
         numbers = (7, 2, 1, 4, 2, 5, 1, 1, 2, 3)
