@@ -1,6 +1,7 @@
 import unittest
 from functools import partial
 from operator import mul
+from time import sleep
 
 from slinkie import Slinkie
 
@@ -20,6 +21,15 @@ class TestSlinkie(unittest.TestCase):
 
         expected = [{'id': 5}, {'id': 6}, {'id': 7}, {'id': 8}]
         self.assertSequenceEqual(actual, expected)
+
+    def test_consume(self):
+        actual = Slinkie(self.ITEMS).consume().len()
+        expected = 0
+        self.assertEqual(actual, expected)
+
+        actual = Slinkie(self.ITEMS).consume(10).len()
+        expected = 11
+        self.assertEqual(actual, expected)
 
     def test_count(self):
         actual = Slinkie(self.ITEMS).count()
@@ -148,11 +158,30 @@ class TestSlinkie(unittest.TestCase):
         expected = (0, 2, 4)
         self.assertTupleEqual(actual, expected)
 
+    def test_map_with_previous(self):
+        def make_tuple(*items):
+            return items
+
+        actual = Slinkie(self.ITEMS).take(3).map_with_previous(make_tuple).tuple()
+        expected = ((None, 0), (0, 1), (1, 2))
+        self.assertTupleEqual(actual, expected)
+
     def test_not_none(self):
         items = (1, 2, None, 3, None)
         actual = Slinkie(items).not_none().tuple()
         expected = (1, 2, 3)
         self.assertTupleEqual(actual, expected)
+
+    def test_parallelize(self):
+        def _wait(number):
+            sleep(number / 100.0)
+            return number
+
+        numbers = (7, 2, 1, 4, 2, 5, 1, 1, 2, 3)
+        actual = Slinkie(numbers).parallelize(_wait, len(numbers)).list()
+        expected = sorted(numbers)
+
+        self.assertSequenceEqual(actual, expected)
 
     def test_partition(self):
         actual = Slinkie(self.ITEMS).partition(3).first().tuple()

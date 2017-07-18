@@ -1,4 +1,5 @@
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from itertools import chain
 
 
@@ -16,6 +17,18 @@ class Slinkie:
     def __next__(self):
         return next(self._items)
 
+    def consume(self, n=None):
+        """
+        Consume n items. If n is None, consume everything.
+        """
+
+        try:
+            for _ in range(n) if n else self._items:
+                next(self._items)
+        except StopIteration:
+            pass
+        return self
+
     def filter(self, key):
         """
         Filter the items.
@@ -27,6 +40,19 @@ class Slinkie:
         Map the items.
         """
         return Slinkie(map(transform, self._items))
+
+    def map_with_previous(self, transform):
+        """
+        Map the items. The transform function should accept two arguments, the previous and current items.
+        """
+
+        def inner():
+            previous = None
+            for item in self._items:
+                yield previous, item
+                previous = item
+
+        return Slinkie(transform(previous, item) for previous, item in inner())
 
     def skip(self, n):
         """
@@ -121,9 +147,11 @@ class Slinkie:
         """
         Yields all the items from this._items, followed by the items supplied to this function.
         """
+
         def _inner():
             yield from self
             yield from iter(items)
+
         return Slinkie(_inner())
 
     def exclude(self, items, key=None):
@@ -140,12 +168,14 @@ class Slinkie:
         """
         Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
         """
+
         def inner():
             while True:
                 result = self.take(n).list()
                 if not result:
                     return
                 yield Slinkie(result)
+
         return Slinkie(inner())
 
     def sort(self, key=None, reverse=False):
@@ -153,6 +183,22 @@ class Slinkie:
         Sorts the items by key.
         """
         return Slinkie(sorted(self._items, key=key, reverse=reverse))
+
+    def parallelize(self, fn, threads=8):
+        """
+        Parallelize a function call.
+        """
+
+        def inner():
+            with ThreadPoolExecutor(threads) as tpe:
+                tasks = [tpe.submit(fn, item) for item in self._items]
+                for future in as_completed(tasks):
+                    try:
+                        yield future.result()
+                    except Exception as exception:
+                        yield exception
+
+        return Slinkie(inner())
 
     def join(self, glue=''):
         """
@@ -206,6 +252,7 @@ class Slinkie:
     # Aliases
     where = filter
     select = map
+    select_with_previous = map_with_previous
     count = len
     __add__ = extend
     __sub__ = exclude
