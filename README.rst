@@ -5,6 +5,7 @@ This is an implementation of LINQ in Python.
 Functions
 ---------
 - between(a, b, key=None): Returns items between a and b. (Inclusive).
+- consume(n=None): Consume n items. If n is None, consume everything.
 - count(): Consumes all items to produce a count.
 - dict(key=None, transform=None): Returns a dict of all items.
 - exclude(items, key=None): Excludes all items based on either their identity, or a key function.
@@ -20,9 +21,12 @@ Functions
 - len(): Consumes all items to produce a count.
 - list(): Returns a list of all items.
 - map(transform): Map the items.
+- map_with_previous(transform): Map the items. The transform function should accept two arguments, the previous and current items.
 - not_none(): Returns all items except None.
+- parallelize(fn, threads=8): Parallelize a function call.
 - partition(n): Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
 - select(transform): Map the items.
+- select_with_previous(transform): Map the items. The transform function should accept two arguments, the previous and current items.
 - set(): Returns a set of all items.
 - skip(n): Skip n items.
 - sort(key=None, reverse=False): Sorts the items by key.

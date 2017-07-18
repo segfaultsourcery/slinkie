@@ -22,7 +22,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='slinkie',
 
-    version='0.1.8',
+    version='0.1.9',
 
     description='A LINQ-esque project.',
     long_description=long_description,

@@ -150,8 +150,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-tools/
 build.sh
-tools/generate_readme.py
-tools/test.py
+generate_readme.py
 .idea/
