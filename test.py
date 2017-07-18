@@ -148,6 +148,14 @@ class TestSlinkie(unittest.TestCase):
         expected = (0, 2, 4)
         self.assertTupleEqual(actual, expected)
 
+    def test_map_with_previous(self):
+        def make_tuple(*items):
+            return items
+
+        actual = Slinkie(self.ITEMS).take(3).map_with_previous(make_tuple).tuple()
+        expected = ((None, 0), (0, 1), (1, 2))
+        self.assertTupleEqual(actual, expected)
+
     def test_not_none(self):
         items = (1, 2, None, 3, None)
         actual = Slinkie(items).not_none().tuple()

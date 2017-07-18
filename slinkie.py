@@ -28,6 +28,19 @@ class Slinkie:
         """
         return Slinkie(map(transform, self._items))
 
+    def map_with_previous(self, transform):
+        """
+        Map the items. The transform function should accept two arguments, the previous and current items.
+        """
+
+        def inner():
+            previous = None
+            for item in self._items:
+                yield previous, item
+                previous = item
+
+        return Slinkie(transform(previous, item) for previous, item in inner())
+
     def skip(self, n):
         """
         Skip n items.
@@ -40,9 +53,11 @@ class Slinkie:
         """
         Take n items.
         """
+
         def inner():
             for _ in range(n):
                 yield next(self._items)
+
         return Slinkie(inner())
 
     def first(self, key=None):
@@ -116,9 +131,11 @@ class Slinkie:
         """
         Yields all the items from this._items, followed by the items supplied to this function.
         """
+
         def _inner():
             yield from self
             yield from iter(items)
+
         return Slinkie(_inner())
 
     def exclude(self, items, key=None):
@@ -135,12 +152,14 @@ class Slinkie:
         """
         Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
         """
+
         def inner():
             while True:
                 result = self.take(n).list()
                 if not result:
                     raise StopIteration()
                 yield Slinkie(result)
+
         return Slinkie(inner())
 
     def sort(self, key=None, reverse=False):
@@ -201,6 +220,7 @@ class Slinkie:
     # Aliases
     where = filter
     select = map
+    select_with_previous = map_with_previous
     count = len
     __add__ = extend
     __sub__ = exclude
