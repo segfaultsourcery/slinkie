@@ -20,13 +20,11 @@ Functions
 - last_or_none(key=None): Take the first item if key is None, otherwise take the first item where key(item) returns true. If there are no objects, None is returned.
 - len(): Consumes all items to produce a count.
 - list(): Returns a list of all items.
-- map(transform): Map the items.
-- map_with_previous(transform): Map the items. The transform function should accept two arguments, the previous and current items.
+- map(transform, with_index=False, with_previous=False): Map the items.
 - not_none(): Returns all items except None.
 - parallelize(fn, threads=8): Parallelize a function call.
 - partition(n): Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
-- select(transform): Map the items.
-- select_with_previous(transform): Map the items. The transform function should accept two arguments, the previous and current items.
+- select(transform, with_index=False, with_previous=False): Map the items.
 - set(): Returns a set of all items.
 - skip(n): Skip n items.
 - sort(key=None, reverse=False): Sorts the items by key.
