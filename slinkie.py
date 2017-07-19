@@ -35,24 +35,24 @@ class Slinkie:
         """
         return Slinkie(filter(key, self._items))
 
-    def map(self, transform):
+    def map(self, transform, with_index=False, with_previous=False):
         """
         Map the items.
         """
-        return Slinkie(map(transform, self._items))
 
-    def map_with_previous(self, transform):
-        """
-        Map the items. The transform function should accept two arguments, the previous and current items.
-        """
+        items = enumerate(self._items) if with_index else self._items
 
-        def inner():
-            previous = None
-            for item in self._items:
-                yield previous, item
-                previous = item
+        if with_previous:
+            # The transform function should accept two arguments, the previous and current items.
+            def inner():
+                previous = (None, None) if with_index else None
+                for item in items:
+                    yield previous, item
+                    previous = item
 
-        return Slinkie(transform(previous, item) for previous, item in inner())
+            return Slinkie(transform(previous, item) for previous, item in inner())
+
+        return Slinkie(map(transform, items))
 
     def skip(self, n):
         """
@@ -252,7 +252,6 @@ class Slinkie:
     # Aliases
     where = filter
     select = map
-    select_with_previous = map_with_previous
     count = len
     __add__ = extend
     __sub__ = exclude

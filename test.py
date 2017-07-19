@@ -153,17 +153,40 @@ class TestSlinkie(unittest.TestCase):
         self.assertListEqual(actual, expected)
 
     def test_map(self):
-        doublify = partial(mul, 2)
-        actual = Slinkie(self.ITEMS).take(3).map(doublify).tuple()
+        _doublify = partial(mul, 2)
+
+        def _make_tuple(*items):
+            return items
+
+        # Double a series of numbers.
+        actual = Slinkie(self.ITEMS).take(3).map(_doublify).tuple()
         expected = (0, 2, 4)
         self.assertTupleEqual(actual, expected)
 
-    def test_map_with_previous(self):
-        def make_tuple(*items):
-            return items
+        # Double a series of numbers, add index numbers.
+        _doublify = partial(mul, 2)
+        actual = Slinkie(self.ITEMS) \
+            .take(3) \
+            .map((lambda pair: (pair[0], _doublify(pair[1]))), with_index=True) \
+            .tuple()
+        expected = ((0, 0), (1, 2), (2, 4))
+        self.assertTupleEqual(actual, expected)
 
-        actual = Slinkie(self.ITEMS).take(3).map_with_previous(make_tuple).tuple()
+        # Make tuples of the previous item and the current item.
+        actual = Slinkie(self.ITEMS) \
+            .take(3) \
+            .map(_make_tuple, with_previous=True) \
+            .tuple()
         expected = ((None, 0), (0, 1), (1, 2))
+        self.assertTupleEqual(actual, expected)
+
+        # Make tuples of the previous item and the current item, both items including their respective indexes.
+        actual = Slinkie(self.ITEMS) \
+            .take(3) \
+            .map(_make_tuple, with_previous=True, with_index=True) \
+            .tuple()
+
+        expected = (((None, None), (0, 0)), ((0, 0), (1, 1)), ((1, 1), (2, 2)))
         self.assertTupleEqual(actual, expected)
 
     def test_not_none(self):
