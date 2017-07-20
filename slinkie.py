@@ -3,6 +3,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import reduce
 from itertools import chain
 
+from multiprocessing import cpu_count
+
 
 class Switch:
     def __init__(self, *triggers, key=None, otherwise=None):
@@ -147,13 +149,15 @@ class Slinkie:
         """
         return Slinkie(filter(lambda it: it is not None, self._items))
 
-    def parallelize(self, fn, threads=8):
+    def parallelize(self, fn, number_of_threads=None):
         """
-        Parallelize a function call.
+        Parallelize a function call. Number of threads defaults to your cpu count + 1.
         """
 
+        number_of_threads = number_of_threads or (cpu_count() + 1)
+
         def inner():
-            with ThreadPoolExecutor(threads) as tpe:
+            with ThreadPoolExecutor(number_of_threads) as tpe:
                 tasks = [tpe.submit(fn, item) for item in self._items]
                 for future in as_completed(tasks):
                     try:
