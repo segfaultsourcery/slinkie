@@ -8,9 +8,9 @@ def _first(items):
 
 
 class Switch:
-    def __init__(self, key, *triggers, otherwise=None):
-        self._key = key
+    def __init__(self, *triggers, key=None, otherwise=None):
         self._triggers = OrderedDict()
+        self._key = key or (lambda it: it)
         self._otherwise = otherwise or (lambda it: it)
 
         for condition, callback in triggers:
@@ -215,9 +215,9 @@ class Slinkie:
 
     # Switching.
 
-    def switch(self, key, *triggers, otherwise=None):
+    def switch(self, *triggers, key=None, otherwise=None):
         """Switch is similar to Haskell's case. See the unit test for examples."""
-        switch = Switch(key, *triggers, otherwise=otherwise)
+        switch = Switch(*triggers, key=key, otherwise=otherwise)
         return Slinkie(map(switch, self._items))
 
     # Functions consuming the slinkie.

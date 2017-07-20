@@ -12,10 +12,10 @@ class TestSwitch(unittest.TestCase):
         def _between(a, b):
             return lambda it: a <= it <= b
 
-        switch = Switch(lambda it: it,
-                        (_between(5, 7), lambda it: 1),
-                        (_between(8, 10), lambda it: 2),
-                        otherwise=lambda it: 3)
+        switch = Switch(
+            (_between(5, 7), lambda it: 1),
+            (_between(8, 10), lambda it: 2),
+            otherwise=lambda it: 3)
 
         actual = Slinkie(range(15)).map(switch).tuple()
         expected = (3, 3, 3, 3, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3)
@@ -26,12 +26,34 @@ class TestSwitch(unittest.TestCase):
         def _between(a, b):
             return lambda it: a <= it <= b
 
-        switch = Switch(lambda it: it,
-                        (_between(5, 7), lambda it: 1),
-                        (_between(8, 10), lambda it: 2))
+        switch = Switch(
+            (_between(5, 7), lambda it: 1),
+            (_between(8, 10), lambda it: 2))
 
         actual = Slinkie(range(15)).map(switch).tuple()
         expected = (0, 1, 2, 3, 4, 1, 1, 1, 2, 2, 2, 11, 12, 13, 14)
+
+        self.assertSequenceEqual(actual, expected)
+
+    def test_with_key(self):
+        def _first(items):
+            return next(iter(items))
+
+        def _between(a, b):
+            return lambda it: a <= it <= b
+
+        switch = Switch(
+            (_between(5, 7), lambda it: it[1] * 2),
+            (_between(8, 10), lambda it: it[1]),
+            key=_first,
+            otherwise=lambda _: 3)
+
+        actual = Slinkie(range(15))\
+            .select(lambda it: (it, chr(ord('a') + it)))\
+            .map(switch)\
+            .tuple()
+
+        expected = (3, 3, 3, 3, 3, 'ff', 'gg', 'hh', 'i', 'j', 'k', 3, 3, 3, 3)
 
         self.assertSequenceEqual(actual, expected)
 
@@ -270,23 +292,36 @@ class TestSlinkie(unittest.TestCase):
         def _between(a, b):
             return lambda it: a <= it <= b
 
+        # No key or otherwise.
         actual = Slinkie(range(15))\
             .switch(
-                lambda it: it,
                 (_between(5, 7), lambda it: 'a'),
                 (_between(8, 10), lambda it: 'b'))\
             .tuple()
         expected = (0, 1, 2, 3, 4, 'a', 'a', 'a', 'b', 'b', 'b', 11, 12, 13, 14)
         self.assertSequenceEqual(actual, expected)
 
+        # With otherwise.
         actual = Slinkie(range(15)) \
             .switch(
-                lambda it: it,
                 (_between(5, 7), lambda it: 'a'),
                 (_between(8, 10), lambda it: 'b'),
                 otherwise=lambda _: 'c') \
             .tuple()
         expected = ('c', 'c', 'c', 'c', 'c', 'a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c', 'c')
+        self.assertSequenceEqual(actual, expected)
+
+        # With key.
+        ord_d, ord_f = ord('d'), ord('f')
+        ord_s, ord_v = ord('s'), ord('v')
+        actual = Slinkie(range(ord('a'), ord('z'))) \
+            .map(chr)\
+            .switch(
+                (_between(ord_d, ord_f), lambda it: '*'),
+                (_between(ord_s, ord_v), lambda it: '_'),
+                key=lambda it: ord(it)) \
+            .str()
+        expected = 'abc***ghijklmnopqr____wxy'
         self.assertSequenceEqual(actual, expected)
 
     def test_take(self):
