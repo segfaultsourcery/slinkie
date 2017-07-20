@@ -125,6 +125,14 @@ class TestSlinkie(unittest.TestCase):
         expected = (1, 2, 3, 4, 5, 6)
         self.assertTupleEqual(actual, expected)
 
+        actual = Slinkie().extend('abc').extend('def').str()
+        expected = 'abcdef'
+        self.assertEqual(actual, expected)
+
+        actual = Slinkie(3).extend('abc').str()
+        expected = '012abc'
+        self.assertEqual(actual, expected)
+
     def test_filter(self):
         def only_even(it):
             return it & 1 == 0

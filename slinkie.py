@@ -25,7 +25,7 @@ class Switch:
 
 class Slinkie:
     def __init__(self, items=list()):
-        self._items = range(items) if isinstance(items, int) else iter(items)
+        self._items = iter(range(items) if isinstance(items, int) else items)
 
     def __iter__(self):
         return self
