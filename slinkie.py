@@ -1,10 +1,29 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from itertools import chain
 
 
 def _first(items):
     return next(iter(items))
+
+
+class Switch:
+    def __init__(self, key, *triggers, otherwise=None):
+        self._key = key
+        self._triggers = OrderedDict()
+        self._otherwise = otherwise or (lambda it: it)
+
+        for condition, callback in triggers:
+            self._triggers[condition] = callback
+
+    def evaluate(self, item):
+        key = self._key
+        for condition, callback in self._triggers.items():
+            if condition(key(item)):
+                return callback(item)
+        return self._otherwise(item)
+
+    __call__ = evaluate
 
 
 class Slinkie:
@@ -193,6 +212,13 @@ class Slinkie:
         Transposes the contents of a Slinkie.
         """
         return Slinkie(zip(*self._items))
+
+    # Switching.
+
+    def switch(self, key, *triggers, otherwise=None):
+        """Switch is similar to Haskell's case. See the unit test for examples."""
+        switch = Switch(key, *triggers, otherwise=otherwise)
+        return Slinkie(map(switch, self._items))
 
     # Functions consuming the slinkie.
 
