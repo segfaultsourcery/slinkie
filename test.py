@@ -22,7 +22,7 @@ class TestSwitch(unittest.TestCase):
 
         self.assertSequenceEqual(actual, expected)
 
-    def test_without_otherwise(self):
+    def test_without_otherwise_or_key(self):
         def _between(a, b):
             return lambda it: a <= it <= b
 
@@ -35,7 +35,7 @@ class TestSwitch(unittest.TestCase):
 
         self.assertSequenceEqual(actual, expected)
 
-    def test_with_key(self):
+    def test_with_key_and_otherwise(self):
         def _first(items):
             return next(iter(items))
 
