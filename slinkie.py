@@ -3,10 +3,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from itertools import chain
 
 
-def _first(items):
-    return next(iter(items))
-
-
 class Switch:
     def __init__(self, *triggers, key=None, otherwise=None):
         self._triggers = OrderedDict()
