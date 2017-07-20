@@ -27,18 +27,6 @@ class Slinkie:
 
         return Slinkie(filter(lambda it: a <= key(it) <= b, self._items))
 
-    def consume(self, n=None):
-        """
-        Consume n items. If n is None, consume everything.
-        """
-
-        try:
-            for _ in range(n) if n else self._items:
-                next(self._items)
-        except StopIteration:
-            pass
-        return self
-
     def exclude(self, items, key=None):
         """
         Excludes all items based on either their identity, or a key function.
@@ -207,6 +195,18 @@ class Slinkie:
         return Slinkie(zip(*self._items))
 
     # Functions consuming the slinkie.
+
+    def consume(self, n=None):
+        """
+        Consume n items. If n is None, consume everything.
+        """
+
+        try:
+            for _ in range(n) if n else self._items:
+                next(self._items)
+        except StopIteration:
+            pass
+        return self
 
     def len(self):
         """
