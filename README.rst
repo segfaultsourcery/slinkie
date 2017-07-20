@@ -14,6 +14,8 @@ Functions
 - first(key=None): Take the first item if key is None, otherwise take the first item where key(item) returns true. If there are no objects, StopIteration is raised.
 - first_or_none(key=None): Take the first item if key is None, otherwise take the first item where key(item) returns true. If there are no objects, None is returned.
 - flatten(): Flatten a two-dimensional result set into a single dimension.
+- foldl(fn, default=None): Fold left. Same as reduce.
+- foldr(fn, default=None): Fold right.
 - group(key): Groups all items on key.
 - join(glue=''): Joins the items by glue, where glue is a string. Calls glue.join.
 - last(key=None): Take the last item if key is None, otherwise take the first item where key(item) returns true. If there are no objects, StopIteration is raised.
@@ -22,12 +24,15 @@ Functions
 - list(): Returns a list of all items.
 - map(transform, with_index=False, with_previous=False): Map the items.
 - not_none(): Returns all items except None.
-- parallelize(fn, threads=8): Parallelize a function call.
+- parallelize(fn, number_of_threads=None): Parallelize a function call. Number of threads defaults to your cpu count + 1.
 - partition(n): Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
+- reduce(fn, default=None): Fold left. Same as reduce.
 - select(transform, with_index=False, with_previous=False): Map the items.
 - set(): Returns a set of all items.
 - skip(n): Skip n items.
 - sort(key=None, reverse=False): Sorts the items by key.
+- str(glue=''): Joins the items by glue, where glue is a string. Calls glue.join.
+- switch(*triggers, key=None, otherwise=None): Switch is similar to Haskell's case. See the unit test for examples.
 - take(n): Take n items.
 - transpose(): Transposes the contents of a Slinkie.
 - tuple(): Returns a tuple of all items.
