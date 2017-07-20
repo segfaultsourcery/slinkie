@@ -213,14 +213,16 @@ class Slinkie:
         """
         return Slinkie(zip(*self._items))
 
-    # Switching.
+    # region Switching.
 
     def switch(self, *triggers, key=None, otherwise=None):
         """Switch is similar to Haskell's case. See the unit test for examples."""
         switch = Switch(*triggers, key=key, otherwise=otherwise)
         return Slinkie(map(switch, self._items))
 
-    # Functions consuming the slinkie.
+    # endregion
+
+    # region Functions consuming the slinkie.
 
     def consume(self, n=None):
         """
@@ -240,7 +242,9 @@ class Slinkie:
         """
         return sum(1 for _ in self._items)
 
-    # Functions transforming the Slinkie to another type of collection.
+    # endregion
+
+    # region Functions transforming the Slinkie to another type of collection.
 
     def dict(self, key=None, transform=None):
         """
@@ -279,9 +283,13 @@ class Slinkie:
         """
         return tuple(self._items)
 
-    # Aliases.
+    # endregion
+
+    # region Aliases.
 
     where = filter
     select = map
     count = len
     join = str
+
+    # endregion
