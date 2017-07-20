@@ -24,7 +24,8 @@ class Switch:
 
 
 class Slinkie:
-    def __init__(self, items=list()):
+    def __init__(self, items=None):
+        items = items or list()
         self._items = iter(range(items) if isinstance(items, int) else items)
 
     def __iter__(self):
