@@ -1,6 +1,6 @@
 import unittest
-from functools import partial
-from operator import mul
+from functools import partial, reduce
+from operator import mul, sub
 from time import sleep
 
 from slinkie import Slinkie, Switch
@@ -156,6 +156,17 @@ class TestSlinkie(unittest.TestCase):
         actual = Slinkie(items).flatten().tuple()
         expected = (1, 2, 3, 4)
         self.assertTupleEqual(actual, expected)
+
+    def test_foldl(self):
+        actual = Slinkie(self.ITEMS).foldl(sub)
+        expected = reduce(sub, self.ITEMS)
+        self.assertEqual(actual, expected)
+
+    def test_foldr(self):
+        items = list(range(3))
+        actual = Slinkie(items).foldr(sub)
+        expected = reduce(sub, reversed(items))
+        self.assertEqual(actual, expected)
 
     def test_group(self):
         def _classify(it):

@@ -1,5 +1,6 @@
 from collections import defaultdict, OrderedDict
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from functools import reduce
 from itertools import chain
 
 
@@ -212,7 +213,9 @@ class Slinkie:
     # region Switching.
 
     def switch(self, *triggers, key=None, otherwise=None):
-        """Switch is similar to Haskell's case. See the unit test for examples."""
+        """
+        Switch is similar to Haskell's case. See the unit test for examples.
+        """
         switch = Switch(*triggers, key=key, otherwise=otherwise)
         return Slinkie(map(switch, self._items))
 
@@ -231,6 +234,26 @@ class Slinkie:
         except StopIteration:
             pass
         return self
+
+    def foldl(self, fn, default=None):
+        """
+        Fold left. Same as reduce.
+        """
+        if default is None:
+            default, *items = self._items
+        else:
+            items = self._items
+        return reduce(fn, items, default)
+
+    def foldr(self, fn, default=None):
+        """
+        Fold right.
+        """
+        if default is None:
+            default, *items = reversed(list(self._items))
+        else:
+            items = reversed(list(self._items))
+        return reduce(fn, items, default)
 
     def len(self):
         """
@@ -287,5 +310,6 @@ class Slinkie:
     select = map
     count = len
     join = str
+    reduce = foldl
 
     # endregion
