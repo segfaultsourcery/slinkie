@@ -364,6 +364,16 @@ class TestSlinkie(unittest.TestCase):
         expected = tuple(self.ITEMS)
         self.assertTupleEqual(actual, expected)
 
+    def test_unique(self):
+        items = [1, 1, 2, 7, 4, 4, 5, 1]
+        actual = Slinkie(items).unique().sort().list()
+        expected = sorted(set(items))
+        self.assertSequenceEqual(actual, expected)
+
+        actual = Slinkie(items).unique(key=lambda it: it & 1 == 0).sort().list()
+        expected = [1, 2]
+        self.assertSequenceEqual(actual, expected)
+
     def test_where(self):
         def only_even(it):
             return it & 1 == 0

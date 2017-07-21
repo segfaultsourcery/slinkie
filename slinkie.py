@@ -215,6 +215,30 @@ class Slinkie:
         """
         return Slinkie(zip(*self._items))
 
+    def unique(self, key=None):
+        """
+        Filter out items that aren't considered unique. You can optionally supply a key function to determine the identity. 
+        """
+
+        def inner():
+            seen = set()
+
+            if key:
+                for item in self._items:
+                    _item = key(item)
+                    if key(item) not in seen:
+                        seen.add(_item)
+                        yield item
+                return
+
+            for item in self._items:
+                if item not in seen:
+                    seen.add(item)
+                    yield item
+
+        return Slinkie(inner())
+
+
     # region Switching.
 
     def switch(self, *triggers, key=None, otherwise=None):
