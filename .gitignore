@@ -153,3 +153,4 @@ ENV/
 build.sh
 generate_readme.py
 .idea/
+.do_*
