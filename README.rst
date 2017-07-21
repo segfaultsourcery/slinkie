@@ -36,6 +36,7 @@ Functions
 - take(n): Take n items.
 - transpose(): Transposes the contents of a Slinkie.
 - tuple(): Returns a tuple of all items.
+- unique(key=None): Filter out items that aren't considered unique. You can optionally supply a key function to determine the identity.
 - where(key): Filter the items.
 
 Installation
