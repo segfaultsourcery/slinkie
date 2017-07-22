@@ -7,7 +7,27 @@ from multiprocessing import cpu_count
 
 
 class Switch:
+    """
+    The Switch class is supposed to be similar to both the switch-case
+    construct we're used to from C-like languages, but also Haskell's case.
+    It's not quite there yet, but as of now, it's possible to feed the
+    constructor a series of (function, function) tuples, where the first
+    function acts as a key, and the second is the callback to run
+    in case the key is a match.
+    
+    To get closer to the functionality of case, the key shouldn't
+    have to be a callable. It should also be able to use types and values,
+    and it should have a way to express that you're not interested
+    in the value at all. In Haskell, you'd use _ for that.
+    """
+
     def __init__(self, *triggers, key=None, otherwise=None):
+        """
+        :param triggers: ((key-function, callback), ...) 
+        :param key: The key function. Selects the relevant value from each item.
+        :param otherwise: If a value falls through every single trigger, this is what's called instead. 
+        """
+
         self._triggers = OrderedDict()
         self._key = key or (lambda it: it)
         self._otherwise = otherwise or (lambda it: it)
@@ -16,6 +36,10 @@ class Switch:
             self._triggers[condition] = callback
 
     def evaluate(self, item):
+        """
+        Evaluate the triggers for the supplied item.
+        """
+
         key = self._key
         for condition, callback in self._triggers.items():
             if condition(key(item)):
