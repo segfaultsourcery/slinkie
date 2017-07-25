@@ -348,6 +348,19 @@ class TestSlinkie(unittest.TestCase):
         expected = [0, 1, 2]
         self.assertSequenceEqual(actual, expected)
 
+    def test_tee(self):
+
+        actual = []
+
+        def _tee(item):
+            print(item)
+            actual.append(item)
+            return item
+
+        Slinkie(self.ITEMS).tee(_tee).take(3).consume()
+        expected = [0, 1, 2]
+        self.assertSequenceEqual(actual, expected)
+
     def test_transpose(self):
         items = ((1, 2), (3, 4))
         actual = Slinkie(items).transpose().tuple()

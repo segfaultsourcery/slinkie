@@ -233,6 +233,20 @@ class Slinkie:
 
         return Slinkie(inner())
 
+    def tee(self, display=None):
+        """
+        Every item that falls through the tee function will be displayed using the display function. If none is supplied, print is used.
+        """
+
+        display = display or print
+
+        def inner():
+            for item in self._items:
+                display(item)
+                yield item
+
+        return Slinkie(inner())
+
     def transpose(self):
         """
         Transposes the contents of a Slinkie.
