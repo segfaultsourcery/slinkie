@@ -1,7 +1,7 @@
 from collections import defaultdict, OrderedDict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import reduce
-from itertools import chain
+from itertools import chain, cycle
 
 from multiprocessing import cpu_count
 
@@ -127,6 +127,35 @@ class Slinkie:
             grouped[key(it)].append(it)
 
         return Slinkie((k, Slinkie(v)) for k, v in grouped.items())
+
+    def intersperse(self, divider):
+        """
+        Intersperses the items with the divider.
+        Slinkie([1, 2, 3]).intersperse('x').list() -> [1, 'x', 2, 'x', 3].
+        """
+
+        def _inner():
+            yield next(self._items)
+            for item in self._items:
+                yield divider
+                yield item
+
+        return Slinkie(_inner())
+
+    def intersperse_items(self, dividers):
+        """
+        Intersperses the items with the dividers, one by one.
+        Slinkie([1, 2, 3, 4, 5]).intersperse_items('xy').list() -> [1, 'x', 2, 'y', 3, 'x', 4, 'y', 5].
+        """
+
+        def _inner():
+            _dividers = cycle(dividers)
+            yield next(self._items)
+            for item in self._items:
+                yield next(_dividers)
+                yield item
+
+        return Slinkie(_inner())
 
     def last(self, key=None):
         """

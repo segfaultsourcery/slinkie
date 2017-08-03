@@ -190,6 +190,32 @@ class TestSlinkie(unittest.TestCase):
         self.assertTupleEqual(actual['even'], expected_evens)
         self.assertTupleEqual(actual['uneven'], expected_unevens)
 
+    def test_intersperse(self):
+        actual = Slinkie([1, 2, 3]).intersperse('x').list()
+        expected = [1, 'x', 2, 'x', 3]
+        self.assertListEqual(actual, expected)
+
+        actual = Slinkie([1]).intersperse('x').list()
+        expected = [1]
+        self.assertListEqual(actual, expected)
+
+        actual = Slinkie([]).intersperse('x').list()
+        expected = []
+        self.assertListEqual(actual, expected)
+
+    def test_intersperse_items(self):
+        actual = Slinkie([1, 2, 3, 4, 5]).intersperse_items('xy').list()
+        expected = [1, 'x', 2, 'y', 3, 'x', 4, 'y', 5]
+        self.assertListEqual(actual, expected)
+
+        actual = Slinkie([1]).intersperse_items('xy').list()
+        expected = [1]
+        self.assertListEqual(actual, expected)
+
+        actual = Slinkie([]).intersperse_items('xy').list()
+        expected = []
+        self.assertListEqual(actual, expected)
+
     def test_join(self):
         items = ('a', 'b', 12)
         actual = Slinkie(items).join('-')
