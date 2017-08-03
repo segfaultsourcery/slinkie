@@ -1,4 +1,4 @@
-from collections import defaultdict, OrderedDict
+from collections import defaultdict, OrderedDict, deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import reduce
 from itertools import chain, cycle
@@ -231,6 +231,26 @@ class Slinkie:
                 if not result:
                     return
                 yield Slinkie(result)
+
+        return Slinkie(inner())
+
+    def sweep(self, width, skip=1):
+        """
+        Similar to itertool's pairwise, this will hand out _width_ number of items at a time, with an offset of _skip_.
+        Slinkie(range(11)).sweep(2) yields the same result as itertools.pairwise, while .sweep(3) would give you
+        (0, 1, 2), (1, 2, 3), ... (8, 9, 10).
+        The last item may be None-padded if there were not _skip_ items left in the Slinkie.
+        """
+
+        def inner():
+            items = self.take(width)
+            current = deque(items, maxlen=width)
+            while items:
+                yield tuple(current)
+                items = self.take(skip).tuple()
+                current.extend(items)
+                if items and len(items) < skip:
+                    current.extend([None] * (skip - len(items)))
 
         return Slinkie(inner())
 

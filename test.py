@@ -308,6 +308,21 @@ class TestSlinkie(unittest.TestCase):
         expected = (0, 1, 2)
         self.assertEqual(actual, expected)
 
+    def test_sweep(self):
+        numbers = list(range(6))
+
+        actual = Slinkie(numbers).sweep(2).list()
+        expected = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)]
+        self.assertSequenceEqual(actual, expected)
+
+        actual = Slinkie(numbers).sweep(3).list()
+        expected = [(0, 1, 2), (1, 2, 3), (2, 3, 4), (3, 4, 5)]
+        self.assertSequenceEqual(actual, expected)
+
+        actual = Slinkie(numbers).sweep(3, 2).list()
+        expected = [(0, 1, 2), (2, 3, 4), (4, 5, None)]
+        self.assertSequenceEqual(actual, expected)
+
     def test_select(self):
         _doublify = partial(mul, 2)
         actual = Slinkie(self.ITEMS).take(3).select(_doublify).tuple()
