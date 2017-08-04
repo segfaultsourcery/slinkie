@@ -17,6 +17,8 @@ Functions
 - foldl(fn, default=None): Fold left. Same as reduce.
 - foldr(fn, default=None): Fold right.
 - group(key): Groups all items on key.
+- intersperse(divider): Intersperses the items with the divider. Slinkie([1, 2, 3]).intersperse('x').list() -> [1, 'x', 2, 'x', 3].
+- intersperse_items(dividers): Intersperses the items with the dividers, one by one. Slinkie([1, 2, 3, 4, 5]).intersperse_items('xy').list() -> [1, 'x', 2, 'y', 3, 'x', 4, 'y', 5].
 - join(glue=''): Joins the items by glue, where glue is a string. Calls glue.join.
 - last(key=None): Take the last item if key is None, otherwise take the first item where key(item) returns true. If there are no objects, StopIteration is raised.
 - last_or_none(key=None): Take the first item if key is None, otherwise take the first item where key(item) returns true. If there are no objects, None is returned.
@@ -32,8 +34,10 @@ Functions
 - skip(n): Skip n items.
 - sort(key=None, reverse=False): Sorts the items by key.
 - str(glue=''): Joins the items by glue, where glue is a string. Calls glue.join.
+- sweep(width, skip=1): Similar to itertool's pairwise, this will hand out _width_ number of items at a time, with an offset of _skip_. Slinkie(range(11)).sweep(2) yields the same result as itertools.pairwise, while .sweep(3) would give you (0, 1, 2), (1, 2, 3), ... (8, 9, 10). The last item may be None-padded if there were not _skip_ items left in the Slinkie.
 - switch(*triggers, key=None, otherwise=None): Switch is similar to Haskell's case. See the unit test for examples.
 - take(n): Take n items.
+- tee(display=None): Every item that falls through the tee function will be displayed using the display function. If none is supplied, print is used.
 - transpose(): Transposes the contents of a Slinkie.
 - tuple(): Returns a tuple of all items.
 - unique(key=None): Filter out items that aren't considered unique. You can optionally supply a key function to determine the identity.
