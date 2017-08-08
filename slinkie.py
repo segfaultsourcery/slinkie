@@ -186,13 +186,13 @@ class Slinkie:
 
         if with_previous:
             # The transform function should accept two arguments, the previous and current items.
-            def inner():
+            def _inner():
                 previous = (None, None) if with_index else None
                 for item in items:
                     yield previous, item
                     previous = item
 
-            return Slinkie(transform(previous, item) for previous, item in inner())
+            return Slinkie(transform(previous, item) for previous, item in _inner())
 
         return Slinkie(map(transform, items))
 
@@ -209,7 +209,7 @@ class Slinkie:
 
         number_of_threads = number_of_threads or (cpu_count() + 1)
 
-        def inner():
+        def _inner():
             with ThreadPoolExecutor(number_of_threads) as tpe:
                 tasks = [tpe.submit(fn, item) for item in self._items]
                 for future in as_completed(tasks):
@@ -218,21 +218,21 @@ class Slinkie:
                     except Exception as exception:
                         yield exception
 
-        return Slinkie(inner())
+        return Slinkie(_inner())
 
     def partition(self, n):
         """
         Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
         """
 
-        def inner():
+        def _inner():
             while True:
                 result = self.take(n).list()
                 if not result:
                     return
                 yield Slinkie(result)
 
-        return Slinkie(inner())
+        return Slinkie(_inner())
 
     def sweep(self, width, skip=1):
         """
@@ -242,7 +242,7 @@ class Slinkie:
         The last item may be None-padded if there were not _skip_ items left in the Slinkie.
         """
 
-        def inner():
+        def _inner():
             items = self.take(width)
             current = deque(items, maxlen=width)
             while items:
@@ -252,7 +252,7 @@ class Slinkie:
                 if items and len(items) < skip:
                     current.extend([None] * (skip - len(items)))
 
-        return Slinkie(inner())
+        return Slinkie(_inner())
 
     def skip(self, n):
         """
@@ -273,14 +273,14 @@ class Slinkie:
         Take n items.
         """
 
-        def inner():
+        def _inner():
             try:
                 for _ in range(n):
                     yield next(self._items)
             except StopIteration:
                 return
 
-        return Slinkie(inner())
+        return Slinkie(_inner())
 
     def tee(self, display=None):
         """
@@ -289,12 +289,12 @@ class Slinkie:
 
         display = display or print
 
-        def inner():
+        def _inner():
             for item in self._items:
                 display(item)
                 yield item
 
-        return Slinkie(inner())
+        return Slinkie(_inner())
 
     def transpose(self):
         """
@@ -307,7 +307,7 @@ class Slinkie:
         Filter out items that aren't considered unique. You can optionally supply a key function to determine the identity. 
         """
 
-        def inner():
+        def _inner():
             seen = set()
 
             if key:
@@ -323,7 +323,7 @@ class Slinkie:
                     seen.add(item)
                     yield item
 
-        return Slinkie(inner())
+        return Slinkie(_inner())
 
 
     # region Switching.
