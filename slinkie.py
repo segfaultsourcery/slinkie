@@ -60,6 +60,22 @@ class Slinkie:
     def __next__(self):
         return next(self._items)
 
+    def all(self, key=None):
+        """
+        Consumes the whole slinkie to find if every item is truthy.
+        """
+        if key:
+            return all(map(key, self._items))
+        return all(self._items)
+
+    def any(self, key=None):
+        """
+        Consumes the slinkie until it finds a truthy item.
+        """
+        if key:
+            return any(map(key, self._items))
+        return any(self._items)
+
     def between(self, a, b, key=None):
         """
         Returns items between a and b. (Inclusive).

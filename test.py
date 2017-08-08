@@ -61,6 +61,38 @@ class TestSwitch(unittest.TestCase):
 class TestSlinkie(unittest.TestCase):
     ITEMS = list(range(21))
 
+    def test_all(self):
+        items = [True, 'a', 1]
+        actual = Slinkie(items).all()
+        expected = True
+        self.assertEqual(actual, expected)
+
+        items = [True, '', 1]
+        actual = Slinkie(items).all()
+        expected = False
+        self.assertEqual(actual, expected)
+
+        items = []
+        actual = Slinkie(items).all()
+        expected = True
+        self.assertEqual(actual, expected)
+
+    def test_any(self):
+        items = [True, 'a', 1]
+        actual = Slinkie(items).any()
+        expected = True
+        self.assertEqual(actual, expected)
+
+        items = [True, '', 1]
+        actual = Slinkie(items).any()
+        expected = True
+        self.assertEqual(actual, expected)
+
+        items = []
+        actual = Slinkie(items).any()
+        expected = False
+        self.assertEqual(actual, expected)
+
     def test_between(self):
         actual = Slinkie(self.ITEMS).between(5, 8).list()
         expected = [5, 6, 7, 8]
