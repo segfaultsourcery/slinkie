@@ -154,3 +154,4 @@ build.sh
 generate_readme.py
 .idea/
 .do_*
+junk.*
