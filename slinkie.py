@@ -249,22 +249,22 @@ class Slinkie:
 
         return Slinkie(_inner())
 
-    def sweep(self, width, skip=1):
+    def sweep(self, width, step=1):
         """
-        Similar to itertools' pairwise, this will hand out _width_ number of items at a time, with an offset of _skip_.
+        Similar to itertools' pairwise, this will hand out _width_ number of items at a time, with an offset of _step_.
         Slinkie(range(11)).sweep(2) yields the same result as itertools.pairwise, while .sweep(3) would give you
         (0, 1, 2), (1, 2, 3), ... (8, 9, 10).
-        The last item may be None-padded if there were not _skip_ items left in the Slinkie.
+        The last item may be None-padded if there were not _step_ items left in the Slinkie.
         """
         def _inner():
             items = self.take(width)
             current = deque(items, maxlen=width)
             while items:
                 yield tuple(current)
-                items = self.take(skip).tuple()
+                items = self.take(step).tuple()
                 current.extend(items)
-                if items and len(items) < skip:
-                    current.extend([None] * (skip - len(items)))
+                if items and len(items) < step:
+                    current.extend([None] * (step - len(items)))
 
         return Slinkie(_inner())
 
