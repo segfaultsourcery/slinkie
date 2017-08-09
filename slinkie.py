@@ -4,6 +4,7 @@ from functools import reduce
 from itertools import chain, cycle
 
 from multiprocessing import cpu_count
+from sys import stderr
 
 
 class Switch:
@@ -80,11 +81,10 @@ class Slinkie:
         """
         Returns items between a and b. (Inclusive).
         """
+        if key:
+            return Slinkie(filter(lambda it: a <= key(it) <= b, self._items))
 
-        if key is None:
-            return Slinkie(filter(lambda it: a <= it <= b, self._items))
-
-        return Slinkie(filter(lambda it: a <= key(it) <= b, self._items))
+        return Slinkie(filter(lambda it: a <= it <= b, self._items))
 
     def exclude(self, items, key=None):
         """
@@ -100,7 +100,6 @@ class Slinkie:
         """
         Yields all the items from this._items, followed by the items supplied to this function.
         """
-
         def _inner():
             yield from self
             yield from iter(items)
@@ -149,7 +148,6 @@ class Slinkie:
         Intersperses the items with the divider.
         Slinkie([1, 2, 3]).intersperse('x').list() -> [1, 'x', 2, 'x', 3].
         """
-
         def _inner():
             yield next(self._items)
             for item in self._items:
@@ -163,7 +161,6 @@ class Slinkie:
         Intersperses the items with the dividers, one by one.
         Slinkie([1, 2, 3, 4, 5]).intersperse_items('xy').list() -> [1, 'x', 2, 'y', 3, 'x', 4, 'y', 5].
         """
-
         def _inner():
             _dividers = cycle(dividers)
             yield next(self._items)
@@ -197,10 +194,13 @@ class Slinkie:
         """
         Map the items.
         """
-
         items = enumerate(self._items) if with_index else self._items
 
         if with_previous:
+            print("Warning: .map(with_previous=True) is deprecated."
+                  " Please use .sweep(2) and .map() instead.",
+                  file=stderr)
+
             # The transform function should accept two arguments, the previous and current items.
             def _inner():
                 previous = (None, None) if with_index else None
@@ -240,7 +240,6 @@ class Slinkie:
         """
         Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
         """
-
         def _inner():
             while True:
                 result = self.take(n).list()
@@ -252,12 +251,11 @@ class Slinkie:
 
     def sweep(self, width, skip=1):
         """
-        Similar to itertool's pairwise, this will hand out _width_ number of items at a time, with an offset of _skip_.
+        Similar to itertools' pairwise, this will hand out _width_ number of items at a time, with an offset of _skip_.
         Slinkie(range(11)).sweep(2) yields the same result as itertools.pairwise, while .sweep(3) would give you
         (0, 1, 2), (1, 2, 3), ... (8, 9, 10).
         The last item may be None-padded if there were not _skip_ items left in the Slinkie.
         """
-
         def _inner():
             items = self.take(width)
             current = deque(items, maxlen=width)
@@ -288,7 +286,6 @@ class Slinkie:
         """
         Take n items.
         """
-
         def _inner():
             try:
                 for _ in range(n):
@@ -302,7 +299,6 @@ class Slinkie:
         """
         Every item that falls through the tee function will be displayed using the display function. If none is supplied, print is used.
         """
-
         display = display or print
 
         def _inner():
@@ -322,7 +318,6 @@ class Slinkie:
         """
         Filter out items that aren't considered unique. You can optionally supply a key function to determine the identity. 
         """
-
         def _inner():
             seen = set()
 
@@ -340,7 +335,6 @@ class Slinkie:
                     yield item
 
         return Slinkie(_inner())
-
 
     # region Switching.
 
