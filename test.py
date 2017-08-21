@@ -380,6 +380,11 @@ class TestSlinkie(unittest.TestCase):
         actual = Slinkie(items).sort(lambda it: it).tuple()
         self.assertTupleEqual(actual, expected)
 
+    def test_split(self):
+        actual = Slinkie(range(9)).split(3).map(list).list()
+        expected = [[0, 3, 6], [1, 4, 7], [2, 5, 8]]
+        self.assertEqual(actual, expected)
+
     def test_switch(self):
         def _between(a, b):
             return lambda it: a <= it <= b

@@ -282,6 +282,33 @@ class Slinkie:
         """
         return Slinkie(sorted(self._items, key=key, reverse=reverse))
 
+    def split(self, number_of_slinkies=2):
+        if number_of_slinkies <= 1:
+            return self,
+
+        collections = [deque() for _ in range(number_of_slinkies)]
+
+        def _add_items():
+            try:
+                for collection in collections:
+                    item = next(self._items)
+                    collection.append(item)
+            except StopIteration:
+                pass
+
+        def _sub_sequence(collection_index):
+            _add_items()
+
+            while collections[collection_index]:
+                _add_items()
+                yield collections[collection_index].popleft()
+
+        def _inner():
+            for i in range(number_of_slinkies):
+                yield Slinkie(_sub_sequence(i))
+
+        return Slinkie(_inner())
+
     def take(self, n):
         """
         Take n items.
