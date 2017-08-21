@@ -283,6 +283,10 @@ class Slinkie:
         return Slinkie(sorted(self._items, key=key, reverse=reverse))
 
     def split(self, number_of_slinkies=2):
+        """
+        Split the items into smaller slinkies. Items are divided using round robin.
+        """
+
         if number_of_slinkies <= 1:
             return self,
 
