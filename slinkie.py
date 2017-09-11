@@ -422,16 +422,13 @@ class Slinkie:
 
     # region Functions transforming the Slinkie to another type of collection.
 
-    def dict(self, key=None, transform=None):
+    def dict(self, key, transform=None):
         """
         Returns a dict of all items.
         """
 
-        if key is None:
-            key = lambda it: it[0]
-
         if transform is None:
-            transform = lambda it: it[1]
+            return {key(it): it for it in self._items}
 
         return {key(it): transform(it) for it in self._items}
 

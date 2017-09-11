@@ -8,7 +8,6 @@ from slinkie import Slinkie, Switch
 
 class TestSwitch(unittest.TestCase):
     def test_with_otherwise(self):
-
         def _between(a, b):
             return lambda it: a <= it <= b
 
@@ -48,9 +47,9 @@ class TestSwitch(unittest.TestCase):
             key=_first,
             otherwise=lambda _: 3)
 
-        actual = Slinkie(range(15))\
-            .select(lambda it: (it, chr(ord('a') + it)))\
-            .map(switch)\
+        actual = Slinkie(range(15)) \
+            .select(lambda it: (it, chr(ord('a') + it))) \
+            .map(switch) \
             .tuple()
 
         expected = (3, 3, 3, 3, 3, 'ff', 'gg', 'hh', 'i', 'j', 'k', 3, 3, 3, 3)
@@ -124,9 +123,12 @@ class TestSlinkie(unittest.TestCase):
         def _classify(it):
             return 'even' if it & 1 == 0 else 'uneven'
 
-        actual = Slinkie(self.ITEMS) \
-            .group(_classify) \
-            .dict(transform=lambda it: it[1].tuple())
+        actual = (
+            Slinkie(self.ITEMS)
+                .group(_classify)
+                .dict(
+                    key=lambda it: it[0],
+                    transform=lambda it: it[1].tuple()))
 
         expected_evens = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
         expected_unevens = (1, 3, 5, 7, 9, 11, 13, 15, 17, 19)
@@ -212,9 +214,12 @@ class TestSlinkie(unittest.TestCase):
         def _classify(it):
             return 'even' if it & 1 == 0 else 'uneven'
 
-        actual = Slinkie(self.ITEMS) \
-            .group(_classify) \
-            .dict(transform=lambda it: it[1].tuple())
+        actual = (
+            Slinkie(self.ITEMS)
+                .group(_classify)
+                .dict(
+                    key=lambda it: it[0],
+                    transform=lambda it: it[1].tuple()))
 
         expected_evens = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
         expected_unevens = (1, 3, 5, 7, 9, 11, 13, 15, 17, 19)
@@ -390,10 +395,10 @@ class TestSlinkie(unittest.TestCase):
             return lambda it: a <= it <= b
 
         # No key or otherwise.
-        actual = Slinkie(range(15))\
+        actual = Slinkie(range(15)) \
             .switch(
-                (_between(5, 7), lambda it: 'a'),
-                (_between(8, 10), lambda it: 'b'))\
+            (_between(5, 7), lambda it: 'a'),
+            (_between(8, 10), lambda it: 'b')) \
             .tuple()
         expected = (0, 1, 2, 3, 4, 'a', 'a', 'a', 'b', 'b', 'b', 11, 12, 13, 14)
         self.assertSequenceEqual(actual, expected)
@@ -401,9 +406,9 @@ class TestSlinkie(unittest.TestCase):
         # With otherwise.
         actual = Slinkie(range(15)) \
             .switch(
-                (_between(5, 7), lambda it: 'a'),
-                (_between(8, 10), lambda it: 'b'),
-                otherwise=lambda _: 'c') \
+            (_between(5, 7), lambda it: 'a'),
+            (_between(8, 10), lambda it: 'b'),
+            otherwise=lambda _: 'c') \
             .tuple()
         expected = ('c', 'c', 'c', 'c', 'c', 'a', 'a', 'a', 'b', 'b', 'b', 'c', 'c', 'c', 'c')
         self.assertSequenceEqual(actual, expected)
@@ -412,11 +417,11 @@ class TestSlinkie(unittest.TestCase):
         ord_d, ord_f = ord('d'), ord('f')
         ord_s, ord_v = ord('s'), ord('v')
         actual = Slinkie(range(ord('a'), ord('z'))) \
-            .map(chr)\
+            .map(chr) \
             .switch(
-                (_between(ord_d, ord_f), lambda it: '*'),
-                (_between(ord_s, ord_v), lambda it: '_'),
-                key=lambda it: ord(it)) \
+            (_between(ord_d, ord_f), lambda it: '*'),
+            (_between(ord_s, ord_v), lambda it: '_'),
+            key=lambda it: ord(it)) \
             .str()
         expected = 'abc***ghijklmnopqr____wxy'
         self.assertSequenceEqual(actual, expected)
@@ -427,7 +432,6 @@ class TestSlinkie(unittest.TestCase):
         self.assertSequenceEqual(actual, expected)
 
     def test_tee(self):
-
         actual = []
 
         def _tee(item):
