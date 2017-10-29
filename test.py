@@ -443,6 +443,13 @@ class TestSlinkie(unittest.TestCase):
         expected = [0, 1, 2]
         self.assertSequenceEqual(actual, expected)
 
+    def test_then(self):
+        items = (1, 2, 3, 4)
+        function = lambda it: reversed(it.list())
+        actual = Slinkie(items).then(function).list()
+        expected = list(reversed(items))
+        self.assertSequenceEqual(actual, expected)
+
     def test_transpose(self):
         items = ((1, 2), (3, 4))
         actual = Slinkie(items).transpose().tuple()

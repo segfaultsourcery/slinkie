@@ -339,6 +339,12 @@ class Slinkie:
 
         return Slinkie(_inner())
 
+    def then(self, fn):
+        """
+        Takes a function that takes a slinkie as its only argument, and returns a collection. The collection is then wrapped in another slinkie.
+        """
+        return Slinkie(fn(self))
+
     def transpose(self):
         """
         Transposes the contents of a Slinkie.
