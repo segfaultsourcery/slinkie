@@ -22,9 +22,9 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='slinkie',
 
-    version='0.3.1',
+    version='0.3.2',
 
-    description='A LINQ-esque project.',
+    description='Method chains for Python.',
     long_description=long_description,
 
     # The project's main homepage.
@@ -59,7 +59,7 @@ setup(
     ],
 
     # What does your project relate to?
-    keywords='linq productivity development',
+    keywords='linq productivity development method-chains functional',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().

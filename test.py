@@ -3,7 +3,7 @@ from functools import partial, reduce
 from operator import mul, sub
 from time import sleep
 
-from slinkie import Slinkie, Switch
+from slinkie import Slinkie, Switch, first, second, third, by_key, by_keys
 
 
 class TestSwitch(unittest.TestCase):
@@ -484,6 +484,40 @@ class TestSlinkie(unittest.TestCase):
         expected = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
 
         self.assertTupleEqual(actual, expected)
+
+
+class TestUtils(unittest.TestCase):
+
+    LETTERS = 'abcdefgh'
+
+    def test_first(self):
+        actual = first(self.LETTERS)
+        expected = self.LETTERS[0]
+        self.assertEqual(actual, expected)
+
+    def test_second(self):
+        actual = second(self.LETTERS)
+        expected = self.LETTERS[1]
+        self.assertEqual(actual, expected)
+
+    def test_third(self):
+        actual = third(self.LETTERS)
+        expected = self.LETTERS[2]
+        self.assertEqual(actual, expected)
+
+    def test_by_key(self):
+        items = [{'letter': letter, 'number': number} for letter, number in zip(self.LETTERS, range(10))]
+        get_letter = by_key('letter')
+        actual = list(map(get_letter, items))
+        expected = list(self.LETTERS)
+        self.assertEqual(actual, expected)
+
+    def test_by_keys(self):
+        items = [{'letter': letter, 'number': number} for letter, number in zip(self.LETTERS, range(10))]
+        get_letter = by_keys('number', 'letter')
+        actual = list(map(get_letter, items))
+        expected = list(zip(range(10), self.LETTERS))
+        self.assertEqual(actual, expected)
 
 
 if __name__ == '__main__':

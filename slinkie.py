@@ -100,6 +100,7 @@ class Slinkie:
         """
         Yields all the items from this._items, followed by the items supplied to this function.
         """
+
         def _inner():
             yield from self
             yield from iter(items)
@@ -148,6 +149,7 @@ class Slinkie:
         Intersperses the items with the divider.
         Slinkie([1, 2, 3]).intersperse('x').list() -> [1, 'x', 2, 'x', 3].
         """
+
         def _inner():
             yield next(self._items)
             for item in self._items:
@@ -161,6 +163,7 @@ class Slinkie:
         Intersperses the items with the dividers, one by one.
         Slinkie([1, 2, 3, 4, 5]).intersperse_items('xy').list() -> [1, 'x', 2, 'y', 3, 'x', 4, 'y', 5].
         """
+
         def _inner():
             _dividers = cycle(dividers)
             yield next(self._items)
@@ -240,6 +243,7 @@ class Slinkie:
         """
         Takes n items and returns them in a new Slinkie. Does so until the items are consumed.
         """
+
         def _inner():
             while True:
                 result = self.take(n).list()
@@ -256,6 +260,7 @@ class Slinkie:
         (0, 1, 2), (1, 2, 3), ... (8, 9, 10).
         The last item may be None-padded if there were not _step_ items left in the Slinkie.
         """
+
         def _inner():
             items = self.take(width)
             current = deque(items, maxlen=width)
@@ -317,6 +322,7 @@ class Slinkie:
         """
         Take n items.
         """
+
         def _inner():
             try:
                 for _ in range(n):
@@ -355,6 +361,7 @@ class Slinkie:
         """
         Filter out items that aren't considered unique. You can optionally supply a key function to determine the identity. 
         """
+
         def _inner():
             seen = set()
 
@@ -473,3 +480,57 @@ class Slinkie:
     reduce = foldl
 
     # endregion
+
+
+#region Utils
+
+def first(items):
+    """
+    Gets the first item from a collection.
+    """
+    return items[0]
+
+
+def second(items):
+    """
+    Gets the second item from a collection.
+    """
+    return items[1]
+
+
+def third(items):
+    """
+    Gets the third item from a collection.
+    """
+    return items[2]
+
+
+def by_key(key):
+    """
+    Returns a function that gets an item by the specified key.
+
+    Example:
+    (
+        Slinkie(items)
+            .sort(by_key('date'))
+    )
+    """
+
+    return lambda items: items[key]
+
+
+def by_keys(*keys):
+    """
+    Returns a function that gets a tuple of items by the specified keys.
+
+    Example:
+    (
+        Slinkie(people)
+            .sort(by_keys('age', 'name'))
+            .map(by_keys('name', 'phone_number'))
+    )
+    """
+
+    return lambda items: tuple(items[key] for key in keys)
+
+#endregion

@@ -1,6 +1,6 @@
 Introduction
 ------------
-This is an implementation of LINQ in Python.
+Method chains for Python.
 
 Functions
 ---------
