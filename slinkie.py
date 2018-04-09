@@ -1,53 +1,9 @@
-from collections import defaultdict, OrderedDict, deque
+from collections import defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import reduce
 from itertools import chain, cycle
 
 from multiprocessing import cpu_count
-from sys import stderr
-
-
-class Switch:
-    """
-    The Switch class is supposed to be similar to both the switch-case
-    construct we're used to from C-like languages, but also Haskell's case.
-    It's not quite there yet, but as of now, it's possible to feed the
-    constructor a series of (function, function) tuples, where the first
-    function acts as a key, and the second is the callback to run
-    in case the key is a match.
-    
-    To get closer to the functionality of case, the key shouldn't
-    have to be a callable. It should also be able to use types and values,
-    and it should have a way to express that you're not interested
-    in the value at all. In Haskell, you'd use _ for that.
-    """
-
-    def __init__(self, *triggers, key=None, otherwise=None):
-        """
-        :param triggers: ((key-function, callback), ...) 
-        :param key: The key function. Selects the relevant value from each item.
-        :param otherwise: If a value falls through every single trigger, this is what's called instead. 
-        """
-
-        self._triggers = OrderedDict()
-        self._key = key or (lambda it: it)
-        self._otherwise = otherwise or (lambda it: it)
-
-        for condition, callback in triggers:
-            self._triggers[condition] = callback
-
-    def evaluate(self, item):
-        """
-        Evaluate the triggers for the supplied item.
-        """
-
-        key = self._key
-        for condition, callback in self._triggers.items():
-            if condition(key(item)):
-                return callback(item)
-        return self._otherwise(item)
-
-    __call__ = evaluate
 
 
 class Slinkie:
@@ -161,7 +117,7 @@ class Slinkie:
     def intersperse_items(self, dividers):
         """
         Intersperses the items with the dividers, one by one.
-        Slinkie([1, 2, 3, 4, 5]).intersperse_items('xy').list() -> [1, 'x', 2, 'y', 3, 'x', 4, 'y', 5].
+        Slinkie([1, 2, 3, 4, 5]).intersperse_items(['x', 'y']).list() -> [1, 'x', 2, 'y', 3, 'x', 4, 'y', 5].
         """
 
         def _inner():
@@ -185,34 +141,19 @@ class Slinkie:
 
     def last_or_none(self, key=None):
         """
-        Take the first item if key is None, otherwise take the first item where key(item) returns true.
-        If there are no objects, None is returned.
+        Take the last item if key is None, otherwise take the last item where key(item) returns true.
+        If there are no matching objects, None is returned.
         """
         try:
             return self.last(key)
         except StopIteration:
             return None
 
-    def map(self, transform, with_index=False, with_previous=False):
+    def map(self, transform, with_index=False):
         """
         Map the items.
         """
         items = enumerate(self._items) if with_index else self._items
-
-        if with_previous:
-            print("Warning: .map(with_previous=True) is deprecated."
-                  " Please use .sweep(2) and .map() instead.",
-                  file=stderr)
-
-            # The transform function should accept two arguments, the previous and current items.
-            def _inner():
-                previous = (None, None) if with_index else None
-                for item in items:
-                    yield previous, item
-                    previous = item
-
-            return Slinkie(transform(previous, item) for previous, item in _inner())
-
         return Slinkie(map(transform, items))
 
     def not_none(self):
@@ -256,7 +197,6 @@ class Slinkie:
     def reverse(self):
         """
         Reverses the order of the Slinkie.
-        :rtype: Slinkie
         """
         return Slinkie(reversed(self.tuple()))
 
@@ -343,7 +283,8 @@ class Slinkie:
 
     def tee(self, display=None):
         """
-        Every item that falls through the tee function will be displayed using the display function. If none is supplied, print is used.
+        Every item that falls through the tee function will be displayed using the display function.
+        If none is supplied, print is used.
         """
         display = display or print
 
@@ -356,7 +297,8 @@ class Slinkie:
 
     def then(self, fn):
         """
-        Takes a function that takes a slinkie as its only argument, and returns a collection. The collection is then wrapped in another slinkie.
+        Takes a function that takes a slinkie as its only argument, and returns a collection.
+        The collection is then wrapped in another slinkie.
         """
         return Slinkie(fn(self))
 
@@ -368,7 +310,8 @@ class Slinkie:
 
     def unique(self, key=None):
         """
-        Filter out items that aren't considered unique. You can optionally supply a key function to determine the identity. 
+        Filter out items that aren't considered unique.
+        You can optionally supply a key function to determine the identity.
         """
 
         def _inner():
@@ -388,17 +331,6 @@ class Slinkie:
                     yield item
 
         return Slinkie(_inner())
-
-    # region Switching.
-
-    def switch(self, *triggers, key=None, otherwise=None):
-        """
-        Switch is similar to Haskell's case. See the unit test for examples.
-        """
-        switch = Switch(*triggers, key=key, otherwise=otherwise)
-        return Slinkie(map(switch, self._items))
-
-    # endregion
 
     # region Functions consuming the slinkie.
 
@@ -491,7 +423,7 @@ class Slinkie:
     # endregion
 
 
-#region Utils
+# region Utils
 
 def first(items):
     """
@@ -542,4 +474,4 @@ def by_keys(*keys):
 
     return lambda items: tuple(items[key] for key in keys)
 
-#endregion
+# endregion
