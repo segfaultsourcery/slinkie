@@ -253,6 +253,15 @@ class Slinkie:
 
         return Slinkie(_inner())
 
+    def reverse(self):
+        """
+        Reverses the order of the Slinkie.
+        :rtype: Slinkie
+        """
+        return Slinkie(reversed(self.tuple()))
+
+    __reversed__ = reverse
+
     def sweep(self, width, step=1):
         """
         Similar to itertools' pairwise, this will hand out _width_ number of items at a time, with an offset of _step_.

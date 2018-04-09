@@ -345,6 +345,15 @@ class TestSlinkie(unittest.TestCase):
         expected = (0, 1, 2)
         self.assertEqual(actual, expected)
 
+    def test_reverse(self):
+        actual = Slinkie(self.ITEMS).take(3).reverse().tuple()
+        expected = (2, 1, 0)
+        self.assertEqual(actual, expected)
+
+        actual = reversed(Slinkie(self.ITEMS).take(3)).tuple()
+        expected = (2, 1, 0)
+        self.assertEqual(actual, expected)
+
     def test_sweep(self):
         numbers = list(range(6))
 
