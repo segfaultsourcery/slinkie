@@ -46,10 +46,12 @@ class TestSlinkie(unittest.TestCase):
         expected = [5, 6, 7, 8]
         self.assertSequenceEqual(actual, expected)
 
-        actual = Slinkie(self.ITEMS) \
-            .map(lambda it: {'id': it}) \
-            .between(5, 8, key=lambda it: it['id']) \
-            .list()
+        actual = (
+            Slinkie(self.ITEMS)
+                .map(lambda it: {'id': it})
+                .between(5, 8, key=lambda it: it['id'])
+                .list()
+        )
 
         expected = [{'id': 5}, {'id': 6}, {'id': 7}, {'id': 8}]
         self.assertSequenceEqual(actual, expected)
@@ -76,8 +78,8 @@ class TestSlinkie(unittest.TestCase):
             Slinkie(self.ITEMS)
                 .group(_classify)
                 .dict(
-                    key=lambda it: it[0],
-                    transform=lambda it: it[1].tuple()))
+                key=lambda it: it[0],
+                transform=lambda it: it[1].tuple()))
 
         expected_evens = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
         expected_unevens = (1, 3, 5, 7, 9, 11, 13, 15, 17, 19)
@@ -92,11 +94,13 @@ class TestSlinkie(unittest.TestCase):
         self.assertTupleEqual(actual, expected)
 
         to_exclude = [{'id': 3}]
-        actual = Slinkie(self.ITEMS) \
-            .take(5) \
-            .map(lambda it: {'id': it}) \
-            .exclude(to_exclude, key=lambda it: it['id']) \
-            .tuple()
+        actual = (
+            Slinkie(self.ITEMS)
+                .take(5)
+                .map(lambda it: {'id': it})
+                .exclude(to_exclude, key=by_key('id'))
+                .tuple()
+        )
 
         expected = ({'id': 0}, {'id': 1}, {'id': 2}, {'id': 4})
         self.assertTupleEqual(actual, expected)
@@ -167,8 +171,8 @@ class TestSlinkie(unittest.TestCase):
             Slinkie(self.ITEMS)
                 .group(_classify)
                 .dict(
-                    key=lambda it: it[0],
-                    transform=lambda it: it[1].tuple()))
+                key=lambda it: it[0],
+                transform=lambda it: it[1].tuple()))
 
         expected_evens = (0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20)
         expected_unevens = (1, 3, 5, 7, 9, 11, 13, 15, 17, 19)
@@ -238,9 +242,6 @@ class TestSlinkie(unittest.TestCase):
     def test_map(self):
         _doublify = partial(mul, 2)
 
-        def _make_tuple(*items):
-            return items
-
         # Double a series of numbers.
         actual = Slinkie(self.ITEMS).take(3).map(_doublify).tuple()
         expected = (0, 2, 4)
@@ -248,10 +249,12 @@ class TestSlinkie(unittest.TestCase):
 
         # Double a series of numbers, add index numbers.
         _doublify = partial(mul, 2)
-        actual = Slinkie(self.ITEMS) \
-            .take(3) \
-            .map((lambda pair: (pair[0], _doublify(pair[1]))), with_index=True) \
-            .tuple()
+        actual = (
+            Slinkie(self.ITEMS)
+                .take(3)
+                .map((lambda pair: (pair[0], _doublify(pair[1]))), with_index=True)
+                .tuple()
+        )
         expected = ((0, 0), (1, 2), (2, 4))
         self.assertTupleEqual(actual, expected)
 
@@ -282,7 +285,7 @@ class TestSlinkie(unittest.TestCase):
         expected = (2, 1, 0)
         self.assertEqual(actual, expected)
 
-        actual = reversed(Slinkie(self.ITEMS).take(3)).tuple()
+        actual = tuple(reversed(Slinkie(self.ITEMS).take(3)))
         expected = (2, 1, 0)
         self.assertEqual(actual, expected)
 
@@ -350,8 +353,11 @@ class TestSlinkie(unittest.TestCase):
 
     def test_then(self):
         items = (1, 2, 3, 4)
-        function = lambda it: reversed(it.list())
-        actual = Slinkie(items).then(function).list()
+        actual = (
+            Slinkie(items)
+                .then(lambda it: reversed(it.list()))
+                .list()
+        )
         expected = list(reversed(items))
         self.assertSequenceEqual(actual, expected)
 
@@ -392,7 +398,6 @@ class TestSlinkie(unittest.TestCase):
 
 
 class TestUtils(unittest.TestCase):
-
     LETTERS = 'abcdefgh'
 
     def test_first(self):
