@@ -334,6 +334,24 @@ class TestSlinkie(unittest.TestCase):
         expected = [[0, 3, 6], [1, 4, 7], [2, 5, 8]]
         self.assertEqual(actual, expected)
 
+    def test_starmap(self):
+        actual = (
+            Slinkie([(1, 2)])
+                .smap(lambda a, b: a + b)
+                .first()
+        )
+        expected = 3
+        self.assertEqual(actual, expected)
+
+        actual = (
+            Slinkie((1, 2, 3))
+                .sweep(2)
+                .smap(lambda a, b: a + b)
+                .tuple()
+        )
+        expected = (3, 5)
+        self.assertEqual(actual, expected)
+
     def test_take(self):
         actual = Slinkie(self.ITEMS).take(3).list()
         expected = [0, 1, 2]

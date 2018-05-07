@@ -267,6 +267,12 @@ class Slinkie:
 
         return Slinkie(_inner())
 
+    def smap(self, transform):
+        """
+        Map the splat of the items.
+        """
+        return Slinkie(map(lambda it: transform(*it), self._items))
+
     def take(self, n):
         """
         Take n items.
