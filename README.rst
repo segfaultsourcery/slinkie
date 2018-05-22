@@ -1,6 +1,6 @@
 Introduction
 ------------
-This is an implementation of LINQ in Python.
+Method chains for Python 3.6 and up.
 
 Functions
 ---------
@@ -34,10 +34,11 @@ Functions
 - reverse(): Reverses the order of the Slinkie.
 - select(transform, with_index=False): Map the items.
 - set(): Returns a set of all items.
+- sfilter(key): Filter the items, uses the splat operator on the key function, just like smap.
 - skip(n): Skip n items.
+- smap(transform): Map the splat of the items.
 - sort(key=None, reverse=False): Sorts the items by key.
 - split(number_of_slinkies=2): Split the items into smaller slinkies. Items are divided using round robin.
-- starmap(transform, with_index=False): Map the splat of the items.
 - str(glue=''): Joins the items by glue, where glue is a string. Calls glue.join.
 - sweep(width, step=1): Similar to itertools' pairwise, this will hand out _width_ number of items at a time, with an offset of _step_. Slinkie(range(11)).sweep(2) yields the same result as itertools.pairwise, while .sweep(3) would give you (0, 1, 2), (1, 2, 3), ... (8, 9, 10). The last item may be None-padded if there were not _step_ items left in the Slinkie.
 - take(n): Take n items.
