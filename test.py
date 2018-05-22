@@ -334,7 +334,7 @@ class TestSlinkie(unittest.TestCase):
         expected = [[0, 3, 6], [1, 4, 7], [2, 5, 8]]
         self.assertEqual(actual, expected)
 
-    def test_starmap(self):
+    def test_smap(self):
         actual = (
             Slinkie([(1, 2)])
                 .smap(lambda a, b: a + b)
@@ -351,6 +351,22 @@ class TestSlinkie(unittest.TestCase):
         )
         expected = (3, 5)
         self.assertEqual(actual, expected)
+
+    def test_filter(self):
+
+        def sum_is_even(a, b, c):
+            return (a + b + c) & 1 == 0
+
+        actual = (
+            Slinkie(range(0, 6))
+                .sweep(3)
+                .sfilter(sum_is_even)
+                .tuple()
+        )
+
+        expected = ((1, 2, 3), (3, 4, 5))
+
+        self.assertTupleEqual(actual, expected)
 
     def test_take(self):
         actual = Slinkie(self.ITEMS).take(3).list()

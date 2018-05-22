@@ -202,6 +202,12 @@ class Slinkie:
 
     __reversed__ = reverse
 
+    def sfilter(self, key):
+        """
+        Filter the items, uses the splat operator on the key function, just like smap.
+        """
+        return Slinkie(filter(lambda it: key(*it), self._items))
+
     def sweep(self, width, step=1):
         """
         Similar to itertools' pairwise, this will hand out _width_ number of items at a time, with an offset of _step_.
